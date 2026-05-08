@@ -18,7 +18,9 @@ CREDS = Credentials.from_service_account_info(
 
 client = gspread.authorize(CREDS)
 
-SPREADSHEET_ID = st.secrets["spreadsheet_id"]
+SPREADSHEET = client.open_by_key(
+    "1sWkC3zvx4ufecZBxLIpCMGo2llsvjuGxl_Putr7iLHA"
+)
 
 SPREADSHEET = client.open_by_key(
     SPREADSHEET_ID
