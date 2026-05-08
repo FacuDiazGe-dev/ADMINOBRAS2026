@@ -18,7 +18,11 @@ CREDS = Credentials.from_service_account_info(
 
 client = gspread.authorize(CREDS)
 
-SPREADSHEET = client.open("ADMINISTRADOROBRA2026")
+SPREADSHEET_ID = st.secrets["spreadsheet_id"]
+
+SPREADSHEET = client.open_by_key(
+    SPREADSHEET_ID
+)
 
 
 def get_dataframe(sheet_name):
