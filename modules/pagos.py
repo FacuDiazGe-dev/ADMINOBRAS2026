@@ -6,8 +6,8 @@ from services.sheets_service import append_row
 from services.selectors import (
     obtener_obras,
     obtener_proveedores,
-    obtener_presupuestos_por_obra,
-    obtener_contratistas_por_obra
+    obtener_contratistas_por_obra,
+    obtener_presupuestos_por_contratista
 )
 
 
