@@ -127,64 +127,69 @@ def render():
     # =====================================================
     # EDICIÓN SIMPLE
     # =====================================================
-
+    
     elif opcion == "Editar":
-
+    
         st.subheader("Editar Obra")
-
+    
         df = get_dataframe("Obras")
-
+    
         if df.empty:
-
+    
             st.warning(
                 "No hay obras cargadas."
             )
-
+    
         else:
-
+    
             obras_dict = {
                 f"{row['ID_Obr']} - {row['NomObr']}"
                 : row['ID_Obr']
                 for _, row in df.iterrows()
             }
-
+    
             obra_label = st.selectbox(
                 "Seleccionar Obra",
                 list(obras_dict.keys())
             )
-
+    
             obra_id = obras_dict[
                 obra_label
             ]
-
+    
             obra_df = df[
                 df["ID_Obr"] == obra_id
             ]
-
+    
             obra = obra_df.iloc[0]
-
+    
             with st.form("editar_obra"):
-
+    
                 nombre = st.text_input(
                     "Nombre Obra",
                     value=obra["NomObr"]
                 )
-
+    
                 comitente = st.text_input(
                     "Comitente",
                     value=obra["Comitente"]
                 )
-
+    
                 contacto = st.text_input(
                     "Contacto",
                     value=obra["ContaObr"]
                 )
-
+    
                 ubicacion = st.text_input(
                     "Ubicación",
-                    value=obra["UbObr"]
+                    value=obra["UbicacionObr"]
                 )
-
+    
+                descripcion = st.text_area(
+                    "Descripción",
+                    value=obra["DescripcionObr"]
+                )
+    
                 estado = st.selectbox(
                     "Estado",
                     [
@@ -194,24 +199,34 @@ def render():
                         "Suspendida"
                     ]
                 )
-
+    
+                fecha_inicio = st.text_input(
+                    "Fecha Inicio",
+                    value=obra["FechaInicioObr"]
+                )
+    
+                fecha_fin = st.text_input(
+                    "Fecha Fin",
+                    value=obra["FechaFinObr"]
+                )
+    
                 observaciones = st.text_area(
                     "Observaciones",
                     value=obra["ObsObr"]
                 )
-
+    
                 guardar_edicion = (
                     st.form_submit_button(
                         "Guardar Cambios"
                     )
                 )
-
+    
                 if guardar_edicion:
-
+    
                     st.info(
-                        "La actualización física en Google Sheets será el próximo paso del CRUD."
+                        "La actualización física en Google Sheets será el próximo paso."
                     )
-
+    
                     st.success(
                         f"Edición preparada para: {obra_id}"
                     )
