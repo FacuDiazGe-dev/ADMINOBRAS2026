@@ -1,6 +1,11 @@
 import streamlit as st
+import pandas as pd
+
 from services.ids import generar_id
-from services.sheets_service import append_row
+from services.sheets_service import (
+    append_row,
+    get_dataframe
+)
 
 
 def render():
@@ -9,26 +14,66 @@ def render():
 
     opcion = st.selectbox(
         "Acción",
-        ["Alta", "Consulta"]
+        [
+            "Alta",
+            "Consulta",
+            "Editar"
+        ]
     )
+
+    # =====================================================
+    # ALTA DE OBRAS
+    # =====================================================
 
     if opcion == "Alta":
 
+        st.subheader("Nueva Obra")
+
         with st.form("form_obra"):
 
-            nombre = st.text_input("Nombre Obra")
-            comitente = st.text_input("Comitente")
-            contacto = st.text_input("Contacto")
-            ubicacion = st.text_input("Ubicación")
+            nombre = st.text_input(
+                "Nombre Obra"
+            )
+
+            comitente = st.text_input(
+                "Comitente"
+            )
+
+            contacto = st.text_input(
+                "Contacto"
+            )
+
+            ubicacion = st.text_input(
+                "Ubicación"
+            )
 
             tipo = st.selectbox(
                 "Tipo",
-                ["Nueva", "Ampliación", "Refacción", "Otro"]
+                [
+                    "Nueva",
+                    "Ampliación",
+                    "Refacción",
+                    "Otro"
+                ]
             )
 
-            observaciones = st.text_area("Observaciones")
+            estado = st.selectbox(
+                "Estado",
+                [
+                    "Activa",
+                    "Pendiente",
+                    "Finalizada",
+                    "Suspendida"
+                ]
+            )
 
-            guardar = st.form_submit_button("Guardar")
+            observaciones = st.text_area(
+                "Observaciones"
+            )
+
+            guardar = st.form_submit_button(
+                "Guardar"
+            )
 
             if guardar:
 
@@ -37,16 +82,136 @@ def render():
                 fila = [
                     obra_id,
                     nombre,
+                    "",
+                    "",
                     comitente,
                     contacto,
                     ubicacion,
                     tipo,
-                    "Activa",
-                    "",
-                    "",
+                    estado,
                     observaciones
                 ]
 
-                append_row("Obras", fila)
+                append_row(
+                    "Obras",
+                    fila
+                )
 
-                st.success(f"Obra creada: {obra_id}")
+                st.success(
+                    f"Obra creada: {obra_id}"
+                )
+
+    # =====================================================
+    # CONSULTA DE OBRAS
+    # =====================================================
+
+    elif opcion == "Consulta":
+
+        st.subheader("Listado de Obras")
+
+        df = get_dataframe("Obras")
+
+        if not df.empty:
+
+            st.dataframe(
+                df,
+                use_container_width=True
+            )
+
+        else:
+
+            st.warning(
+                "No hay obras registradas."
+            )
+
+    # =====================================================
+    # EDICIÓN SIMPLE
+    # =====================================================
+
+    elif opcion == "Editar":
+
+        st.subheader("Editar Obra")
+
+        df = get_dataframe("Obras")
+
+        if df.empty:
+
+            st.warning(
+                "No hay obras cargadas."
+            )
+
+        else:
+
+            obras_dict = {
+                f"{row['ID_Obr']} - {row['NomObr']}"
+                : row['ID_Obr']
+                for _, row in df.iterrows()
+            }
+
+            obra_label = st.selectbox(
+                "Seleccionar Obra",
+                list(obras_dict.keys())
+            )
+
+            obra_id = obras_dict[
+                obra_label
+            ]
+
+            obra_df = df[
+                df["ID_Obr"] == obra_id
+            ]
+
+            obra = obra_df.iloc[0]
+
+            with st.form("editar_obra"):
+
+                nombre = st.text_input(
+                    "Nombre Obra",
+                    value=obra["NomObr"]
+                )
+
+                comitente = st.text_input(
+                    "Comitente",
+                    value=obra["Comiten"]
+                )
+
+                contacto = st.text_input(
+                    "Contacto",
+                    value=obra["ContaObr"]
+                )
+
+                ubicacion = st.text_input(
+                    "Ubicación",
+                    value=obra["UbObr"]
+                )
+
+                estado = st.selectbox(
+                    "Estado",
+                    [
+                        "Activa",
+                        "Pendiente",
+                        "Finalizada",
+                        "Suspendida"
+                    ]
+                )
+
+                observaciones = st.text_area(
+                    "Observaciones",
+                    value=obra["ObsObr"]
+                )
+
+                guardar_edicion = (
+                    st.form_submit_button(
+                        "Guardar Cambios"
+                    )
+                )
+
+                if guardar_edicion:
+
+                    st.info(
+                        "La actualización física en Google Sheets será el próximo paso del CRUD."
+                    )
+
+                    st.success(
+                        f"Edición preparada para: {obra_id}"
+                    )
