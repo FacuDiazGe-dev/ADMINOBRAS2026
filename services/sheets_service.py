@@ -37,3 +37,27 @@ def append_row(sheet_name, row):
     sheet = SPREADSHEET.worksheet(sheet_name)
 
     sheet.append_row(row)
+
+def update_obra(
+    obra_id,
+    nueva_fila
+):
+
+    sheet = SPREADSHEET.worksheet("Obras")
+
+    data = sheet.get_all_records()
+
+    for idx, row in enumerate(data, start=2):
+
+        if row["ID_Obr"] == obra_id:
+
+            rango = f"A{idx}:J{idx}"
+
+            sheet.update(
+                rango,
+                [nueva_fila]
+            )
+
+            return True
+
+    return False
