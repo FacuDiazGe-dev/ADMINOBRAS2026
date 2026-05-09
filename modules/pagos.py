@@ -7,9 +7,9 @@ from services.sheets_service import append_row
 
 from services.selectors import (
     obtener_obras,
-    obtener_contratistas,
     obtener_proveedores,
-    obtener_presupuestos
+    obtener_presupuestos_por_obra,
+    obtener_contratistas_por_obra
 )
 
 
@@ -21,23 +21,27 @@ def render():
 
         # OBRAS
         obras_dict = obtener_obras()
-
+        
         obra_label = st.selectbox(
             "Obra",
             list(obras_dict.keys())
         )
-
+        
         obra_id = obras_dict[obra_label]
 
         # CONTRATISTAS
-        contratistas_dict = obtener_contratistas()
+        contratistas_dict = obtener_contratistas_por_obra(
+            obra_id
+        )
 
         contratista_label = st.selectbox(
             "Contratista",
             list(contratistas_dict.keys())
         )
-
-        contratista_id = contratistas_dict[contratista_label]
+        
+        contratista_id = contratistas_dict[
+            contratista_label
+        ]
 
         # PROVEEDORES
         proveedores_dict = obtener_proveedores()
@@ -50,14 +54,18 @@ def render():
         proveedor_id = proveedores_dict[proveedor_label]
 
         # PRESUPUESTOS
-        presupuestos_dict = obtener_presupuestos()
+        presupuestos_dict = obtener_presupuestos_por_obra(
+            obra_id
+        )
 
         presupuesto_label = st.selectbox(
             "Presupuesto",
             list(presupuestos_dict.keys())
         )
-
-        presupuesto_id = presupuestos_dict[presupuesto_label]
+        
+        presupuesto_id = presupuestos_dict[
+            presupuesto_label
+        ]
 
         # DATOS PAGO
         tipo = st.selectbox(
