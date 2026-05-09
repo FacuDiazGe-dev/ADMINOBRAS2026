@@ -165,7 +165,7 @@ def render():
                 ]
                 append_row(
                     "Presupuestos",
-                    fila
+                    nueva_fila  # Antes decía 'fila'
                 )
 
                 st.success(
