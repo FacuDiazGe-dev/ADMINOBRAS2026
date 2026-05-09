@@ -148,22 +148,21 @@ def render():
                     generar_id("PRE")
                 )
 
-                fila = [
+                nueva_fila = [
                     obra_id,
                     contratista_id,
                     presupuesto_id,
                     tipo_contrato,
-                    str(fecha_inicio),
-                    str(fecha_fin),
-                    monto_inicial,
-                    monto_actual,
+                    str(fecha_inicio),  # Convertir a string
+                    str(fecha_fin),     # Convertir a string
+                    float(monto_inicial),
+                    float(monto_actual),
                     especialidad,
                     codigo_especialidad,
                     estado,
                     causa_estado,
                     observaciones
                 ]
-
                 append_row(
                     "Presupuestos",
                     fila
