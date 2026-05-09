@@ -58,6 +58,7 @@ def render():
             # CONTRATISTAS
             contratistas_dict = (
                 obtener_contratistas()
+                )
             )
 
             contratista_label = (
