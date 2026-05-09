@@ -5,7 +5,7 @@ from services.sheets_service import append_row
 
 from services.selectors import (
     obtener_obras,
-    obtener_contratistas
+    obtener_contratistas_por_obra
 )
 
 
@@ -26,7 +26,7 @@ def render():
         obra_id = obras_dict[obra_label]
 
         # CONTRATISTAS
-        contratistas_dict = obtener_contratistas()
+        contratistas_dict = obtener_contratistas_por_obra()
 
         contratista_label = st.selectbox(
             "Contratista",
