@@ -1,6 +1,16 @@
 import streamlit as st
+
+from datetime import datetime
+
 from services.ids import generar_id
 from services.sheets_service import append_row
+
+from services.selectors import (
+    obtener_obras,
+    obtener_contratistas,
+    obtener_proveedores,
+    obtener_presupuestos
+)
 
 
 def render():
@@ -9,26 +19,86 @@ def render():
 
     with st.form("form_pagos"):
 
-        obra = st.text_input("ID Obra")
-        contratista = st.text_input("ID Contratista")
-        proveedor = st.text_input("ID Proveedor")
-        presupuesto = st.text_input("ID Presupuesto")
+        # OBRAS
+        obras_dict = obtener_obras()
 
+        obra_label = st.selectbox(
+            "Obra",
+            list(obras_dict.keys())
+        )
+
+        obra_id = obras_dict[obra_label]
+
+        # CONTRATISTAS
+        contratistas_dict = obtener_contratistas()
+
+        contratista_label = st.selectbox(
+            "Contratista",
+            list(contratistas_dict.keys())
+        )
+
+        contratista_id = contratistas_dict[contratista_label]
+
+        # PROVEEDORES
+        proveedores_dict = obtener_proveedores()
+
+        proveedor_label = st.selectbox(
+            "Proveedor",
+            list(proveedores_dict.keys())
+        )
+
+        proveedor_id = proveedores_dict[proveedor_label]
+
+        # PRESUPUESTOS
+        presupuestos_dict = obtener_presupuestos()
+
+        presupuesto_label = st.selectbox(
+            "Presupuesto",
+            list(presupuestos_dict.keys())
+        )
+
+        presupuesto_id = presupuestos_dict[presupuesto_label]
+
+        # DATOS PAGO
         tipo = st.selectbox(
             "Tipo Movimiento",
             ["Pago", "Aporte"]
         )
 
-        monto = st.number_input("Monto", min_value=0.0)
+        monto = st.number_input(
+            "Monto",
+            min_value=0.0
+        )
+
+        fecha_pago = st.date_input(
+            "Fecha Pago"
+        )
 
         metodo = st.selectbox(
             "Método Pago",
-            ["Efectivo", "Transferencia", "Cheque"]
+            [
+                "Efectivo",
+                "Transferencia",
+                "Cheque"
+            ]
         )
 
-        observaciones = st.text_area("Observaciones")
+        estado = st.selectbox(
+            "Estado",
+            [
+                "Pendiente",
+                "Pagado",
+                "Cancelado"
+            ]
+        )
 
-        guardar = st.form_submit_button("Registrar")
+        observaciones = st.text_area(
+            "Observaciones"
+        )
+
+        guardar = st.form_submit_button(
+            "Registrar"
+        )
 
         if guardar:
 
@@ -36,21 +106,20 @@ def render():
 
             fila = [
                 pago_id,
-                obra,
-                contratista,
-                proveedor,
-                presupuesto,
-                tipo,
+                obra_id,
+                contratista_id,
+                proveedor_id,
+                presupuesto_id,
                 monto,
-                "",
+                str(fecha_pago),
+                tipo,
                 metodo,
-                "Activo",
+                estado,
                 observaciones
             ]
 
             append_row("Pagos", fila)
 
-            st.success("Pago registrado")
-            append_row("Pagos", fila)
-
-            st.success("Pago registrado")
+            st.success(
+                f"Pago registrado correctamente: {pago_id}"
+            )
