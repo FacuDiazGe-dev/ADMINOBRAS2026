@@ -33,7 +33,7 @@ def render():
         # =========================
         # DESTINO DEL PAGO
         # =========================
-
+        
         destinatario = st.radio(
             "Destino del Pago",
             [
@@ -41,131 +41,88 @@ def render():
                 "Proveedor"
             ]
         )
-
-        # =========================
-        # CONTRATISTAS
-        # =========================
-
+        
         contratista_id = None
         proveedor_id = None
         presupuesto_id = None
-
+        
+        # ==================================================
+        # PAGO A CONTRATISTA
+        # ==================================================
+        
         if destinatario == "Contratista":
-
+        
+            # CONTRATISTAS
             contratistas_dict = obtener_contratistas_por_obra(
                 obra_id
             )
-
+        
             if contratistas_dict:
-
+        
                 contratista_label = st.selectbox(
                     "Contratista",
                     list(contratistas_dict.keys())
                 )
-
+        
                 contratista_id = contratistas_dict[
                     contratista_label
                 ]
-
+        
+                # PRESUPUESTOS DEL CONTRATISTA
+                presupuestos_dict = (
+                    obtener_presupuestos_por_contratista(
+                        obra_id,
+                        contratista_id
+                    )
+                )
+        
+                if presupuestos_dict:
+        
+                    presupuesto_label = st.selectbox(
+                        "Presupuesto",
+                        list(presupuestos_dict.keys())
+                    )
+        
+                    presupuesto_id = presupuestos_dict[
+                        presupuesto_label
+                    ]
+        
+                else:
+        
+                    st.warning(
+                        "No hay presupuestos asociados a este contratista."
+                    )
+        
             else:
-
+        
                 st.warning(
                     "No hay contratistas asociados a esta obra."
                 )
-
-            # =========================
-            # PRESUPUESTOS
-            # =========================
-
-            presupuestos_dict = obtener_presupuestos_por_contratista(
-                obra_id,
-                contratista_id
-            )
-
-            if presupuestos_dict:
-
-                presupuesto_label = st.selectbox(
-                    "Presupuesto",
-                    list(presupuestos_dict.keys())
-                )
-
-                presupuesto_id = presupuestos_dict[
-                    presupuesto_label
-                ]
-
-            else:
-
-                st.warning(
-                    "No hay presupuestos asociados a esta obra."
-                )
-
-        # =========================
-        # PROVEEDORES
-        # =========================
-
+        
+        # ==================================================
+        # PAGO A PROVEEDOR
+        # ==================================================
+        
         elif destinatario == "Proveedor":
-
+        
             proveedores_dict = obtener_proveedores()
-
+        
             if proveedores_dict:
-
+        
                 proveedor_label = st.selectbox(
                     "Proveedor",
                     list(proveedores_dict.keys())
                 )
-
+        
                 proveedor_id = proveedores_dict[
                     proveedor_label
                 ]
-
+        
             else:
-
+        
                 st.warning(
                     "No hay proveedores registrados."
                 )
-
-        # =========================
-        # DATOS DEL PAGO
-        # =========================
-
-        tipo = st.selectbox(
-            "Tipo Movimiento",
-            [
-                "Pago",
-                "Aporte"
-            ]
-        )
-
-        monto = st.number_input(
-            "Monto",
-            min_value=0.0
-        )
-
-        fecha_pago = st.date_input(
-            "Fecha Pago"
-        )
-
-        metodo = st.selectbox(
-            "Método Pago",
-            [
-                "Efectivo",
-                "Transferencia",
-                "Cheque"
-            ]
-        )
-
-        estado = st.selectbox(
-            "Estado",
-            [
-                "Pendiente",
-                "Pagado",
-                "Cancelado"
-            ]
-        )
-
-        observaciones = st.text_area(
-            "Observaciones"
-        )
 
         # =========================
         # BOTÓN GUARDAR
