@@ -69,3 +69,18 @@ def obtener_presupuestos_por_contratista(
         : row['ID_Pres']
         for _, row in df_filtrado.iterrows()
     }
+from services.sheets_service import (
+    get_dataframe
+)
+
+
+def obtener_contratistas():
+
+    df = get_dataframe(
+        "Contratistas"
+    )
+
+    return {
+        row["NomCon"]: row["ID_Con"]
+        for _, row in df.iterrows()
+    }
