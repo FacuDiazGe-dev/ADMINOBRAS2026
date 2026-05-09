@@ -30,6 +30,10 @@ def render():
         obra_id = obras_dict[obra_label]
 
         # CONTRATISTAS
+        contratistas_dict = obtener_contratistas_por_obra(
+            obra_id
+        )
+        
         if contratistas_dict:
         
             contratista_label = st.selectbox(
@@ -63,16 +67,25 @@ def render():
         presupuestos_dict = obtener_presupuestos_por_obra(
             obra_id
         )
-
-        presupuesto_label = st.selectbox(
-            "Presupuesto",
-            list(presupuestos_dict.keys())
-        )
         
-        presupuesto_id = presupuestos_dict[
-            presupuesto_label
-        ]
-
+        if presupuestos_dict:
+        
+            presupuesto_label = st.selectbox(
+                "Presupuesto",
+                list(presupuestos_dict.keys())
+            )
+        
+            presupuesto_id = presupuestos_dict[
+                presupuesto_label
+            ]
+        
+        else:
+        
+            st.warning(
+                "No hay presupuestos asociados a esta obra."
+            )
+        
+            presupuesto_id = None
         # DATOS PAGO
         tipo = st.selectbox(
             "Tipo Movimiento",
