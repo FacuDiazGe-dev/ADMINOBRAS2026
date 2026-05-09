@@ -30,18 +30,24 @@ def render():
         obra_id = obras_dict[obra_label]
 
         # CONTRATISTAS
-        contratistas_dict = obtener_contratistas_por_obra(
-            obra_id
-        )
-
-        contratista_label = st.selectbox(
-            "Contratista",
-            list(contratistas_dict.keys())
-        )
+        if contratistas_dict:
         
-        contratista_id = contratistas_dict[
-            contratista_label
-        ]
+            contratista_label = st.selectbox(
+                "Contratista",
+                list(contratistas_dict.keys())
+            )
+        
+            contratista_id = contratistas_dict[
+                contratista_label
+            ]
+        
+        else:
+        
+            st.warning(
+                "No hay contratistas asociados a esta obra."
+            )
+        
+            contratista_id = None
 
         # PROVEEDORES
         proveedores_dict = obtener_proveedores()
