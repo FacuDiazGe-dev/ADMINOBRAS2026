@@ -200,204 +200,88 @@ def render():
             )
 
     # =====================================================
-    # EDITAR
+    # EDITAR (CORREGIDO)
     # =====================================================
 
     elif opcion == "Editar":
-
-        st.subheader(
-            "Editar Presupuesto"
-        )
-
-        df = get_dataframe(
-            "Presupuestos"
-        )
+        st.subheader("Editar Presupuesto")
+        df = get_dataframe("Presupuestos")
 
         if df.empty:
-
-            st.warning(
-                "No hay presupuestos cargados."
-            )
-
+            st.warning("No hay presupuestos cargados.")
         else:
-
             presupuestos_dict = {
-
-                row["ID_Pres"]:
-                row["ID_Pres"]
-
+                str(row["ID_Pres"]): str(row["ID_Pres"])
                 for _, row in df.iterrows()
             }
 
-            presupuesto_label = (
-                st.selectbox(
-                    "Seleccionar Presupuesto",
-                    list(
-                        presupuestos_dict.keys()
-                    )
-                )
+            presupuesto_label = st.selectbox(
+                "Seleccionar Presupuesto",
+                list(presupuestos_dict.keys())
             )
 
-            presupuesto_id = (
-                presupuestos_dict[
-                    presupuesto_label
-                ]
-            )
+            presupuesto_id = presupuestos_dict[presupuesto_label]
+            presupuesto_df = df[df["ID_Pres"] == presupuesto_id]
+            presupuesto = presupuesto_df.iloc[0]
 
-            presupuesto_df = df[
-                df["ID_Pres"] ==
-                presupuesto_id
-            ]
-
-            presupuesto = (
-                presupuesto_df.iloc[0]
-            )
-
-            with st.form(
-                "editar_presupuesto"
-            ):
-
-                tipo_contrato = (
-                    st.selectbox(
-                        "Tipo Contrato",
-                        [
-                            "Mano de Obra",
-                            "Materiales",
-                            "Servicio",
-                            "Integral"
-                        ]
-                    )
+            with st.form("editar_presupuesto"):
+                tipo_contrato = st.selectbox(
+                    "Tipo Contrato",
+                    ["Mano de Obra", "Materiales", "Servicio", "Integral"],
+                    index=0 # Podrías buscar el índice actual si quisieras
                 )
 
-                fecha_inicio = (
-                    st.text_input(
-                        "Fecha Inicio",
-                        value=presupuesto[
-                            "FecIncPres"
-                        ]
-                    )
-                )
+                # Usamos str() y .fillna() implícito para evitar errores de lectura
+                fecha_inicio = st.text_input("Fecha Inicio", value=str(presupuesto.get("FecIncPres", "")))
+                fecha_fin = st.text_input("Fecha Fin", value=str(presupuesto.get("FecFinPres", "")))
 
-                fecha_fin = (
-                    st.text_input(
-                        "Fecha Fin",
-                        value=presupuesto[
-                            "FecFinPres"
-                        ]
-                    )
-                )
+                # Validación de montos para evitar ValueError si hay NaN
+                try:
+                    val_ini = float(presupuesto["MonInicPres"])
+                except:
+                    val_ini = 0.0
+                
+                try:
+                    val_act = float(presupuesto["MonActPres"])
+                except:
+                    val_act = 0.0
 
-                monto_inicial = (
-                    st.number_input(
-                        "Monto Inicial",
-                        value=float(
-                            presupuesto[
-                                "MonInicPres"
-                            ]
-                        )
-                    )
-                )
+                monto_inicial = st.number_input("Monto Inicial", value=val_ini)
+                monto_actual = st.number_input("Monto Actual", value=val_act)
 
-                monto_actual = (
-                    st.number_input(
-                        "Monto Actual",
-                        value=float(
-                            presupuesto[
-                                "MonActPres"
-                            ]
-                        )
-                    )
-                )
+                especialidad = st.text_input("Especialidad", value=str(presupuesto.get("EspPres", "")))
+                codigo_especialidad = st.text_input("Código Especialidad", value=str(presupuesto.get("Cdo_EspPres", "")))
+                
+                estado = st.selectbox("Estado", ["Activo", "Pendiente", "Finalizado", "Cancelado"])
+                causa_estado = st.text_input("Causa Estado", value=str(presupuesto.get("CauEstPres", "")))
+                observaciones = st.text_area("Observaciones", value=str(presupuesto.get("ObsCon", "")))
 
-                especialidad = (
-                    st.text_input(
-                        "Especialidad",
-                        value=presupuesto[
-                            "EspPres"
-                        ]
-                    )
-                )
-
-                codigo_especialidad = (
-                    st.text_input(
-                        "Código Especialidad",
-                        value=presupuesto[
-                            "Cdo_EspPres"
-                        ]
-                    )
-                )
-
-                estado = st.selectbox(
-                    "Estado",
-                    [
-                        "Activo",
-                        "Pendiente",
-                        "Finalizado",
-                        "Cancelado"
-                    ]
-                )
-
-                causa_estado = (
-                    st.text_input(
-                        "Causa Estado",
-                        value=presupuesto[
-                            "CauEstPres"
-                        ]
-                    )
-                )
-
-                observaciones = (
-                    st.text_area(
-                        "Observaciones",
-                        value=presupuesto[
-                            "ObsCon"
-                        ]
-                    )
-                )
-
-                guardar_edicion = (
-                    st.form_submit_button(
-                        "Guardar Cambios"
-                    )
-                )
+                guardar_edicion = st.form_submit_button("Guardar Cambios")
 
                 if guardar_edicion:
-
+                    # LIMPIEZA CRÍTICA: Convertimos todo a tipos básicos (str o float)
+                    # Esto elimina los NaNs de Pandas que causan el TypeError
                     nueva_fila = [
-                        presupuesto[
-                            "ID_Obr"
-                        ],
-                        presupuesto[
-                            "ID_Con"
-                        ],
-                        presupuesto_id,
-                        tipo_contrato,
-                        fecha_inicio,
-                        fecha_fin,
-                        monto_inicial,
-                        monto_actual,
-                        especialidad,
-                        codigo_especialidad,
-                        estado,
-                        causa_estado,
-                        observaciones
+                        str(presupuesto["ID_Obr"]),
+                        str(presupuesto["ID_Con"]),
+                        str(presupuesto_id),
+                        str(tipo_contrato),
+                        str(fecha_inicio),
+                        str(fecha_fin),
+                        float(monto_inicial),
+                        float(monto_actual),
+                        str(especialidad),
+                        str(codigo_especialidad),
+                        str(estado),
+                        str(causa_estado),
+                        str(observaciones)
                     ]
 
-                    actualizado = (
-                        update_presupuesto(
-                            presupuesto_id,
-                            nueva_fila
-                        )
-                    )
+                    # Llamada al servicio
+                    actualizado = update_presupuesto(presupuesto_id, nueva_fila)
 
                     if actualizado:
-
-                        st.success(
-                            f"Presupuesto actualizado: {presupuesto_id}"
-                        )
-
+                        st.success(f"✅ Presupuesto actualizado: {presupuesto_id}")
+                        # Opcional: st.rerun() para refrescar los datos
                     else:
-
-                        st.error(
-                            "No se pudo actualizar el presupuesto."
-                        )
+                        st.error("❌ No se pudo actualizar el presupuesto.")
