@@ -61,3 +61,29 @@ def update_obra(
             return True
 
     return False
+
+def update_contratista(
+    contratista_id,
+    nueva_fila
+):
+
+    sheet = SPREADSHEET.worksheet(
+        "Contratistas"
+    )
+
+    data = sheet.get_all_records()
+
+    for idx, row in enumerate(data, start=2):
+
+        if row["ID_Con"] == contratista_id:
+
+            rango = f"A{idx}:I{idx}"
+
+            sheet.update(
+                rango,
+                [nueva_fila]
+            )
+
+            return True
+
+    return False
