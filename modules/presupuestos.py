@@ -99,6 +99,7 @@ def render():
             presupuesto_id = generar_id("PRE")
 
             fila = [
+                obra_id,
                 contratista_id,
                 presupuesto_id,
                 tipo_contrato,
