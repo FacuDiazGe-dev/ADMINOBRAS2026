@@ -59,7 +59,7 @@ def render():
             contratistas_dict = (
                 obtener_contratistas()
                 )
-            )
+            
 
             contratista_label = (
                 st.selectbox(
