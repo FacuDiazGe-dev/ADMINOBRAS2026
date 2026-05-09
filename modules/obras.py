@@ -82,13 +82,13 @@ def render():
                 fila = [
                     obra_id,
                     nombre,
-                    "",
-                    "",
                     comitente,
                     contacto,
                     ubicacion,
                     tipo,
                     estado,
+                    "",
+                    "",
                     observaciones
                 ]
 
