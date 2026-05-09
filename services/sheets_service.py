@@ -116,3 +116,13 @@ def update_presupuesto(
             return True
 
     return False
+
+def update_proveedor(proveedor_id, nueva_fila):
+    sheet = SPREADSHEET.worksheet("Proveedores")
+    data = sheet.get_all_records()
+    for idx, row in enumerate(data, start=2):
+        if row["ID_Prov"] == proveedor_id:
+            # Rango A-H porque son 8 columnas en tu módulo proveedores
+            sheet.update(f"A{idx}:H{idx}", [nueva_fila])
+            return True
+    return False
