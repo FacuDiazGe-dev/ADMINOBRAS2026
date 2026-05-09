@@ -1,7 +1,5 @@
 import streamlit as st
 
-from datetime import datetime
-
 from services.ids import generar_id
 from services.sheets_service import append_row
 
@@ -19,77 +17,122 @@ def render():
 
     with st.form("form_pagos"):
 
+        # =========================
         # OBRAS
+        # =========================
+
         obras_dict = obtener_obras()
-        
+
         obra_label = st.selectbox(
             "Obra",
             list(obras_dict.keys())
         )
-        
+
         obra_id = obras_dict[obra_label]
 
-        # CONTRATISTAS
-        contratistas_dict = obtener_contratistas_por_obra(
-            obra_id
-        )
-        
-        if contratistas_dict:
-        
-            contratista_label = st.selectbox(
+        # =========================
+        # DESTINO DEL PAGO
+        # =========================
+
+        destinatario = st.radio(
+            "Destino del Pago",
+            [
                 "Contratista",
-                list(contratistas_dict.keys())
-            )
-        
-            contratista_id = contratistas_dict[
-                contratista_label
+                "Proveedor"
             ]
-        
-        else:
-        
-            st.warning(
-                "No hay contratistas asociados a esta obra."
-            )
-        
-            contratista_id = None
+        )
 
+        # =========================
+        # CONTRATISTAS
+        # =========================
+
+        contratista_id = None
+        proveedor_id = None
+        presupuesto_id = None
+
+        if destinatario == "Contratista":
+
+            contratistas_dict = obtener_contratistas_por_obra(
+                obra_id
+            )
+
+            if contratistas_dict:
+
+                contratista_label = st.selectbox(
+                    "Contratista",
+                    list(contratistas_dict.keys())
+                )
+
+                contratista_id = contratistas_dict[
+                    contratista_label
+                ]
+
+            else:
+
+                st.warning(
+                    "No hay contratistas asociados a esta obra."
+                )
+
+            # =========================
+            # PRESUPUESTOS
+            # =========================
+
+            presupuestos_dict = obtener_presupuestos_por_obra(
+                obra_id
+            )
+
+            if presupuestos_dict:
+
+                presupuesto_label = st.selectbox(
+                    "Presupuesto",
+                    list(presupuestos_dict.keys())
+                )
+
+                presupuesto_id = presupuestos_dict[
+                    presupuesto_label
+                ]
+
+            else:
+
+                st.warning(
+                    "No hay presupuestos asociados a esta obra."
+                )
+
+        # =========================
         # PROVEEDORES
-        proveedores_dict = obtener_proveedores()
+        # =========================
 
-        proveedor_label = st.selectbox(
-            "Proveedor",
-            list(proveedores_dict.keys())
-        )
+        elif destinatario == "Proveedor":
 
-        proveedor_id = proveedores_dict[proveedor_label]
+            proveedores_dict = obtener_proveedores()
 
-        # PRESUPUESTOS
-        presupuestos_dict = obtener_presupuestos_por_obra(
-            obra_id
-        )
-        
-        if presupuestos_dict:
-        
-            presupuesto_label = st.selectbox(
-                "Presupuesto",
-                list(presupuestos_dict.keys())
-            )
-        
-            presupuesto_id = presupuestos_dict[
-                presupuesto_label
-            ]
-        
-        else:
-        
-            st.warning(
-                "No hay presupuestos asociados a esta obra."
-            )
-        
-            presupuesto_id = None
-        # DATOS PAGO
+            if proveedores_dict:
+
+                proveedor_label = st.selectbox(
+                    "Proveedor",
+                    list(proveedores_dict.keys())
+                )
+
+                proveedor_id = proveedores_dict[
+                    proveedor_label
+                ]
+
+            else:
+
+                st.warning(
+                    "No hay proveedores registrados."
+                )
+
+        # =========================
+        # DATOS DEL PAGO
+        # =========================
+
         tipo = st.selectbox(
             "Tipo Movimiento",
-            ["Pago", "Aporte"]
+            [
+                "Pago",
+                "Aporte"
+            ]
         )
 
         monto = st.number_input(
@@ -123,9 +166,17 @@ def render():
             "Observaciones"
         )
 
+        # =========================
+        # BOTÓN GUARDAR
+        # =========================
+
         guardar = st.form_submit_button(
-            "Registrar"
+            "Registrar Pago"
         )
+
+        # =========================
+        # GUARDAR DATOS
+        # =========================
 
         if guardar:
 
@@ -145,7 +196,10 @@ def render():
                 observaciones
             ]
 
-            append_row("Pagos", fila)
+            append_row(
+                "Pagos",
+                fila
+            )
 
             st.success(
                 f"Pago registrado correctamente: {pago_id}"
