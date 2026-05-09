@@ -14,17 +14,26 @@ def obtener_obras():
     }
 
 
-def obtener_contratistas():
+def obtener_contratistas_por_obra(obra_id):
 
-    df = get_dataframe("Contratistas")
+    df = get_dataframe("Presupuestos")
 
     if df.empty:
         return {}
 
-    return {
-        f"{row['NomCon']} ({row['ID_Con']})": row['ID_Con']
-        for _, row in df.iterrows()
-    }
+    df_filtrado = df[
+        df["ID_Obr"] == obra_id
+    ]
+
+    contratistas = {}
+
+    for _, row in df_filtrado.iterrows():
+
+        contratistas[
+            f"{row['ID_Con']}"
+        ] = row["ID_Con"]
+
+    return contratistas
 
 
 def obtener_proveedores():
@@ -40,15 +49,19 @@ def obtener_proveedores():
     }
 
 
-def obtener_presupuestos():
+def obtener_presupuestos_por_obra(obra_id):
 
     df = get_dataframe("Presupuestos")
 
     if df.empty:
         return {}
 
+    df_filtrado = df[
+        df["ID_Obr"] == obra_id
+    ]
+
     return {
-        f"{row['ID_Pres']} - ${row['MontoInicialPres']}"
+        f"{row['ID_Pres']} - ${row['MonInicPres']}"
         : row['ID_Pres']
-        for _, row in df.iterrows()
+        for _, row in df_filtrado.iterrows()
     }
