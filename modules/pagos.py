@@ -77,8 +77,9 @@ def render():
             # PRESUPUESTOS
             # =========================
 
-            presupuestos_dict = obtener_presupuestos_por_obra(
-                obra_id
+            presupuestos_dict = obtener_presupuestos_por_contratista(
+                obra_id,
+                contratista_id
             )
 
             if presupuestos_dict:
