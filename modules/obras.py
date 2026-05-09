@@ -172,7 +172,7 @@ def render():
 
                 comitente = st.text_input(
                     "Comitente",
-                    value=obra["Comiten"]
+                    value=obra["Comitente"]
                 )
 
                 contacto = st.text_input(
