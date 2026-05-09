@@ -49,7 +49,10 @@ def obtener_proveedores():
     }
 
 
-def obtener_presupuestos_por_obra(obra_id):
+def obtener_presupuestos_por_contratista(
+    obra_id,
+    contratista_id
+):
 
     df = get_dataframe("Presupuestos")
 
@@ -57,7 +60,8 @@ def obtener_presupuestos_por_obra(obra_id):
         return {}
 
     df_filtrado = df[
-        df["ID_Obr"] == obra_id
+        (df["ID_Obr"] == obra_id) &
+        (df["ID_Con"] == contratista_id)
     ]
 
     return {
