@@ -222,12 +222,34 @@ def render():
                     )
                 )
     
-                if guardar_edicion:
-    
-                    st.info(
-                        "La actualización física en Google Sheets será el próximo paso."
-                    )
-    
+            if guardar_edicion:
+            
+                nueva_fila = [
+                    obra_id,
+                    nombre,
+                    comitente,
+                    contacto,
+                    ubicacion,
+                    descripcion,
+                    estado,
+                    fecha_inicio,
+                    fecha_fin,
+                    observaciones
+                ]
+            
+                actualizado = update_obra(
+                    obra_id,
+                    nueva_fila
+                )
+            
+                if actualizado:
+            
                     st.success(
-                        f"Edición preparada para: {obra_id}"
+                        f"Obra actualizada correctamente: {obra_id}"
+                    )
+            
+                else:
+            
+                    st.error(
+                        "No se pudo actualizar la obra."
                     )
