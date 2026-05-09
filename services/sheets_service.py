@@ -87,3 +87,32 @@ def update_contratista(
             return True
 
     return False
+
+def update_presupuesto(
+    presupuesto_id,
+    nueva_fila
+):
+
+    sheet = SPREADSHEET.worksheet(
+        "Presupuestos"
+    )
+
+    data = sheet.get_all_records()
+
+    for idx, row in enumerate(
+        data,
+        start=2
+    ):
+
+        if row["ID_Pres"] == presupuesto_id:
+
+            rango = f"A{idx}:M{idx}"
+
+            sheet.update(
+                rango,
+                [nueva_fila]
+            )
+
+            return True
+
+    return False
